@@ -9,10 +9,10 @@ export default function ModuleRoutes(app) {
             res.send(status);
         } catch (error) {
             console.error("Error updating module:", error);
-            res.status(500).json({ 
-                status: "error", 
+            res.status(500).json({
+                status: "error",
                 message: "Server error while updating module",
-                error: error.message 
+                error: error.message
             });
         }
     });
@@ -22,4 +22,19 @@ export default function ModuleRoutes(app) {
         const status = await modulesDao.deleteModule(moduleId);
         res.send(status);
     });
+    app.get("/api/courses/:courseId/modules", async (req, res) => {
+        const { courseId } = req.params;
+        const modules = await modulesDao.findModulesForCourse(courseId);
+        res.json(modules);
+    });
+    app.post("/api/courses/:courseId/modules", async (req, res) => {
+        const { courseId } = req.params;
+        const module = {
+            ...req.body,
+            course: courseId,
+        };
+        const newModule = await modulesDao.createModule(module);
+        res.send(newModule);
+    });
+
 }
